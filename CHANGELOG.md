@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.3 (2013-03-09)
+
+  * Fix broken URL in README
+
 ## 0.0.2 (2013-03-09)
 
   * Add .npmignore
