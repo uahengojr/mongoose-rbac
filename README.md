@@ -21,7 +21,7 @@ Generally, you will want to do the following:
 
 ### Example
 
-Following is a typical example. Let's imagine we are managing a blog with users, preferences, posts and comments. First, we'll define our permissions and roles:
+Following is a typical example. Let's imagine we are managing a blog with users, preferences, posts and comments. First, we will define our permissions and roles:
 
 ```javascript
 // permissions.js
@@ -65,9 +65,11 @@ Permission.create(permissions, function (err) {
 });
 ```
 
-We can also use `init` to easily bootstrap roles and permissions:
+Alternatively we can use `init` to easily bootstrap roles and permissions:
 
 ```javascript
+// permissions.js
+
 var rbac = require('mongoose-rbac');
 
 rbac.init({
@@ -102,7 +104,7 @@ rbac.init({
 });
 ```
 
-Next, we'll enhance our user model with the mongoose-rbac plugin:
+Next, we will enhance our user model with the mongoose-rbac plugin:
 
 ```javascript
 // user.js
@@ -205,9 +207,11 @@ Check if the model has _all_ of the given permissions.
 
 ## Running Tests
 
-To run the tests:
+To run the tests, clone the repository and install the dev dependencies:
 
 ```bash
+git clone git://https://github.com/bryandragon/mongoose-rbac.git
+cd mongoose-rbac && npm install
 make test
 ```
 
