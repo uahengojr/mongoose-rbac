@@ -210,7 +210,7 @@ Check if the model has _all_ of the given permissions.
 To run the tests, clone the repository and install the dev dependencies:
 
 ```bash
-git clone git://https://github.com/bryandragon/mongoose-rbac.git
+git clone git://github.com/bryandragon/mongoose-rbac.git
 cd mongoose-rbac && npm install
 make test
 ```
