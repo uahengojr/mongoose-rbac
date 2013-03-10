@@ -25,7 +25,6 @@
   },
   "license": "MIT",
   "readmeFilename": "README.md",
-  "gitHead": "6d2f3973c3b490dba8f7244c4f91eff95a7e2835",
   "devDependencies": {
     "mongodb": "~1.2.13",
     "mocha": "~1.8.1",
