@@ -1,7 +1,7 @@
 {
   "name": "mongoose-rbac",
   "version": "0.0.2",
-  "description": "Role-based access control for mongoose models.",
+  "description": "Role-based access control for mongoose apps.",
   "main": "lib/index.js",
   "scripts": {
     "test": "make test"
