@@ -1,0 +1,38 @@
+{
+  "name": "mongoose-rbac",
+  "version": "0.0.1",
+  "description": "Role-based access control for mongoose models.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bryandragon/mongoose-rbac.git"
+  },
+  "keywords": [
+    "mongoose",
+    "security",
+    "authorization",
+    "rbac",
+    "role",
+    "permission"
+  ],
+  "author": {
+    "name": "Bryan Dragon",
+    "email": "bryandragon@gmail.com",
+    "url": "http://www.bryandragon.com"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "6d2f3973c3b490dba8f7244c4f91eff95a7e2835",
+  "devDependencies": {
+    "mongodb": "~1.2.13",
+    "mocha": "~1.8.1",
+    "expect.js": "~0.2.0"
+  },
+  "dependencies": {
+    "mongoose": "~3.6.0rc0",
+    "async": "~0.2.6"
+  }
+}
