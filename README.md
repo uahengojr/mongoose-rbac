@@ -191,18 +191,18 @@ Check if the model has the given permisison.
 * `subject` String
 * `callback(err, bool)` Function
 
-### `canAny(actionsOrSubjects, callback)`
+### `canAny(actionsAndSubjects, callback)`
 
 Check if the model has _any_ of the given permissions.
 
-* `actionsOrSubjects` Array (of `[String, String]`)
+* `actionsAndSubjects` Array (of `[String, String]`)
 * `callback(err, bool)` Function
 
 ### `canAll(actionsAndSubjects, callback)`
 
 Check if the model has _all_ of the given permissions.
 
-* `actionsOrSubjects` Array (of [String, String])
+* `actionsAndSubjects` Array (of [String, String])
 * `callback(err, bool)` Function
 
 ## Running Tests
