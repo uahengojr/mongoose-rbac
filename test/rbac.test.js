@@ -15,11 +15,14 @@ describe('roles and permissions:', function () {
   beforeEach(function (next) {
     common.loadFixtures(function (err) {
       if (err) return next(err);
-      User.findOne({ username: 'henry' }).populate('roles').exec(function (err, user) {
-        if (err) return next(err);
-        henry = user;
-        next();
-      });
+      User
+        .findOne({ username: 'henry' })
+        .populate('roles')
+        .exec(function (err, user) {
+          if (err) return next(err);
+          henry = user;
+          next();
+        });
     });
   });
 
@@ -30,24 +33,30 @@ describe('roles and permissions:', function () {
   describe('initialization:', function () {
     it('should batch create roles and permissions', function (next) {
       rbac.init({
-        role1: [
-          ['create', 'Post'],
-          ['read', 'Post'],
-          ['update', 'Post'],
-          ['delete', 'Post']
-        ],
-        role2: [
-          ['read', 'Post']
-        ],
+        role1: {
+          // subject-actions syntax
+          Post: ['create', 'read', 'update', 'delete']
+        },
+        role2: {
+          // subject-action syntax
+          Post: 'read'
+        },
         role3: [
+          // array list syntax
           ['read', 'Post'],
           ['update', 'Post']
+        ],
+        role4: [
+          // object list syntax
+          {action: 'read', subject: 'Post'},
+          {action: 'create', subject: 'Post'}
         ]
-      }, function (err, role1, role2, role3) {
-        expect(err).to.not.exist;
+      }, function (err, role1, role2, role3, role4) {
+        expect(err).not.to.exist;
         expect(role1.permissions).to.have.length(4);
         expect(role2.permissions).to.have.length(1);
         expect(role3.permissions).to.have.length(2);
+        expect(role4.permissions).to.have.length(2);
         next();
       });
     });
@@ -73,9 +82,9 @@ describe('roles and permissions:', function () {
 
   it('should remove a role from a model', function (next) {
     henry.addRole('admin', function (err) {
-      expect(err).to.not.exist;
+      expect(err).not.to.exist;
       henry.removeRole('admin', function (err) {
-        expect(err).to.not.exist;
+        expect(err).not.to.exist;
         expect(henry.roles).to.be.empty;
         next();
       })
@@ -85,12 +94,12 @@ describe('roles and permissions:', function () {
   it('should indicate whether a model has a given role', function (next) {
     expect(henry.roles).to.be.empty;
     henry.hasRole('admin', function (err, hasAdminRole) {
-      expect(err).to.not.exist;
+      expect(err).not.to.exist;
       expect(hasAdminRole).to.equal(false);
       henry.addRole('admin', function (err) {
-        expect(err).to.not.exist;
+        expect(err).not.to.exist;
         henry.hasRole('admin', function (err, hasAdminRole) {
-          expect(err).to.not.exist;
+          expect(err).not.to.exist;
           expect(hasAdminRole).to.equal(true);
           next();
         });
@@ -98,14 +107,16 @@ describe('roles and permissions:', function () {
     });
   });
 
+  // EXACTLY ONE
+
   it('should indicate whether a model has a given permission', function (next) {
     henry.addRole('readonly', function (err) {
-      expect(err).to.not.exist;
+      expect(err).not.to.exist;
       henry.can('read', 'Post', function (err, canReadPost) {
-        expect(err).to.not.exist;
+        expect(err).not.to.exist;
         expect(canReadPost).to.equal(true);
         henry.can('create', 'Post', function (err, canCreatePost) {
-          expect(err).to.not.exist;
+          expect(err).not.to.exist;
           expect(canCreatePost).to.equal(false);
           next();
         });
@@ -113,13 +124,74 @@ describe('roles and permissions:', function () {
     });
   });
 
-  it('should indicate whether a model has all of a given set of permissions', function (next) {
+  // ALL
+
+  it('should indicate whether a model has all of a given ' +
+     'set of permissions (array list syntax)', function (next) {
     henry.addRole('readonly', function (err) {
-      henry.canAll([['read', 'Post'], ['read', 'Comment']], function (err, canRead) {
-        expect(err).to.not.exist;
+      henry.canAll([['read', 'Post'], ['read', 'Comment']],
+        function (err, canRead) {
+          expect(err).not.to.exist;
+          expect(canRead).to.equal(true);
+          henry.canAll([['read', 'Post'], ['create', 'Post']],
+            function (err, canReadAndCreate) {
+              expect(err).not.to.exist;
+              expect(canReadAndCreate).to.equal(false);
+              next();
+            });
+        });
+    });
+  });
+
+  it('should indicate whether a model has all of a given ' +
+     'set of permissions (object list syntax)', function (next) {
+    henry.addRole('readonly', function (err) {
+      henry.canAll([
+          {action: 'read', subject: 'Post'},
+          {action: 'read', subject: 'Comment'}
+        ],
+        function (err, canRead) {
+          expect(err).not.to.exist;
+          expect(canRead).to.equal(true);
+          henry.canAll([
+              {action: 'read', subject: 'Post'},
+              {action: 'create', subject: 'Post'}
+            ],
+            function (err, canReadAndCreate) {
+              expect(err).not.to.exist;
+              expect(canReadAndCreate).to.equal(false);
+              next();
+            });
+        });
+    });
+  });
+
+  it('should indicate whether a model has all of a given ' +
+     'set of permissions (subject-actions object syntax)', function (next) {
+    henry.addRole('readonly', function (err) {
+      henry.canAll({Post: 'read', Comment: 'read'},
+        function (err, canRead) {
+          expect(err).not.to.exist;
+          expect(canRead).to.equal(true);
+          henry.canAll({Post: ['read', 'create']},
+            function (err, canReadAndCreate) {
+              expect(err).not.to.exist;
+              expect(canReadAndCreate).to.equal(false);
+              next();
+            });
+        });
+    });
+  });
+
+  it('should indicate whether a model has all of a given ' +
+     'set of permissions (string syntax)', function (next) {
+    henry.addRole('readonly', function (err) {
+      expect(err).not.to.exist;
+      henry.canAll('read:Post read:Comment', function (err, canRead) {
+        expect(err).not.to.exist;
         expect(canRead).to.equal(true);
-        henry.canAll([['read', 'Post'], ['create', 'Post']], function (err, canReadAndCreate) {
-          expect(err).to.not.exist;
+        henry.canAll('read:Post create:Post', function (err, canReadAndCreate) {
+          expect(err).not.to.exist;
           expect(canReadAndCreate).to.equal(false);
           next();
         });
@@ -127,14 +199,60 @@ describe('roles and permissions:', function () {
     });
   });
 
-  it('should indicate whether a model has any of a given set of permissions', function (next) {
+  // ANY
+
+  it('should indicate whether a model has any of a given ' +
+     'set of permissions (array list syntax)', function (next) {
     henry.addRole('readonly', function (err) {
-      expect(err).to.not.exist;
-      henry.canAny([['read', 'Post'], ['create', 'Post']], function (err, canReadOrCreate) {
-        expect(err).to.not.exist;
-        expect(canReadOrCreate).to.equal(true);
-        next();
+      expect(err).not.to.exist;
+      henry.canAny([['read', 'Post'], ['create', 'Post']],
+        function (err, canReadOrCreate) {
+          expect(err).not.to.exist;
+          expect(canReadOrCreate).to.equal(true);
+          next();
+        });
       });
-    });
+  });
+
+  it('should indicate whether a model has any of a given ' +
+     'set of permissions (object list syntax)', function (next) {
+    henry.addRole('readonly', function (err) {
+      expect(err).not.to.exist;
+      henry.canAny([
+          {action: 'read', subject: 'Post'},
+          {action: 'create', subject: 'Post'}
+        ],
+        function (err, canReadOrCreate) {
+          expect(err).not.to.exist;
+          expect(canReadOrCreate).to.equal(true);
+          next();
+        });
+      });
+  });
+
+  it('should indicate whether a model has any of a given ' +
+     'set of permissions (subject-actions object syntax)', function (next) {
+    henry.addRole('readonly', function (err) {
+      expect(err).not.to.exist;
+      henry.canAny({Post: ['read', 'create']},
+        function (err, canReadOrCreate) {
+          expect(err).not.to.exist;
+          expect(canReadOrCreate).to.equal(true);
+          next();
+        });
+      });
+  });
+
+  it('should indicate whether a model has any of a given ' +
+     'set of permissions (string syntax)', function (next) {
+    henry.addRole('readonly', function (err) {
+      expect(err).not.to.exist;
+      henry.canAny('read:Post create:Post',
+        function (err, canReadOrCreate) {
+          expect(err).not.to.exist;
+          expect(canReadOrCreate).to.equal(true);
+          next();
+        });
+      });
   });
 });

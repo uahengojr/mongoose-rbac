@@ -21,17 +21,72 @@ Generally, you will want to do the following:
 
 ### Example
 
-Following is a typical example. Let's imagine we are managing a blog with users, preferences, posts and comments. First, we will define our permissions and roles:
+Let's imagine we are managing a blog with users, preferences, posts and comments. First, we will define our permissions and roles. The recommended approach is to bootstrap roles and permissions using `rbac.init`:
 
 ```javascript
 // permissions.js
 
-var rbac = require('mongoose-rbac')
-  , Permission = rbac.Permission
-  , Role = rbac.Role
-  , permissions;
+var rbac = require('mongoose-rbac');
 
-permissions = [
+rbac.init({
+  admin: {
+    Post: ['create', 'read', 'update', 'delete'],
+    Comment: ['create', 'read', 'update', 'delete'],
+    Preference: ['create', 'read', 'update', 'delete']
+  },
+  developer: {
+    Post: ['create', 'read', 'update', 'delete'],
+    Comment: ['create', 'read', 'update', 'delete']
+  },
+  readonly: {
+    Post: 'read',
+    Comment: 'read'
+  }
+}, function (err, admin, developer, readonly) {
+  // ...
+});
+```
+
+`rbac.init` supports three syntaxes for mapping roles to permissions:
+
+```javascript
+// Subject-actions object
+rbac.init({
+  admin: {
+    Post: ['create', 'read'],
+    Comment: ['create', 'read']
+  }
+});
+
+// Array of action/subject arrays
+rbac.init({
+  admin: [
+    ['create', 'Post'],
+    ['read', 'Post'],
+    ['create', 'Comment'],
+    ['read', 'Comment']
+  ]
+});
+
+// Array of action/subject objects
+rbac.init({
+  admin: [
+    {action: 'create', subject: 'Post'},
+    {action: 'read', subject: 'Post'},
+    {action: 'create', subject: 'Comment'},
+    {action: 'read', subject: 'Comment'}
+  ]
+});
+```
+
+You may, however, choose to work with permissions and roles at a more granular level:
+
+```javascript
+// permissions.js
+
+var rbac = require('mongoose-rbac');
+
+var permissions = [
     { subject: 'Post', action: 'create' }
   , { subject: 'Post', action: 'read' }
   , { subject: 'Post', action: 'update' }
@@ -46,18 +101,18 @@ permissions = [
   , { subject: 'Preference', action: 'delete' }
 ];
 
-Permission.create(permissions, function (err) {
+rbac.Permission.create(permissions, function (err) {
   var perms, admin, developer, readonly;
 
   perms = Array.prototype.slice.call(arguments, 1);
 
-  admin = new Role({ name: 'admin' });
+  admin = new rbac.Role({name: 'admin'});
   admin.permissions = perms;
   admin.save(function (err, admin) {
-    developer = new Role({ name: 'developer' });
+    developer = new rbac.Role({name: 'developer'});
     developer.permissions = perms.slice(0, 7);
     developer.save(function (err, developer) {
-      readonly = new Role({ name: 'readonly' });
+      readonly = new rbac.Role({name: 'readonly'});
       readonly.permissions = [perms[1], perms[5], perms[9]];
       readonly.save(function (err, readonly) {
         // ...
@@ -67,46 +122,7 @@ Permission.create(permissions, function (err) {
 });
 ```
 
-Alternatively we can use `init` to easily bootstrap roles and permissions:
-
-```javascript
-// permissions.js
-
-var rbac = require('mongoose-rbac');
-
-rbac.init({
-  admin: [
-    ['create', 'Post'],
-    ['read', 'Post'],
-    ['update', 'Post'],
-    ['delete', 'Post']
-  ],
-  readonly: [
-    // we can also specify permissions as an object
-    { action: 'read', subject: 'Post' }
-  ]
-}, function (err, admin, readonly) {
-  console.log(admin);
-  /*
-    { __v: 1,
-      name: 'admin',
-      _id: 513c14dbc90000d10100004e,
-      permissions: [ 513c14dbc90000d101000044,
-        513c14dbc90000d101000045,
-        513c14dbc90000d101000046,
-        513c14dbc90000d101000047 ] }
-  */
-  console.log(readonly);
-  /*
-    { __v: 1,
-      name: 'readonly',
-      _id: 513c14dbc90000d10100004f,
-      permissions: [ 513c14dbc90000d101000045 ] }
-  */
-});
-```
-
-Next, we will enhance our user model with the mongoose-rbac plugin:
+Next, we will enhance our `User` model with the mongoose-rbac plugin:
 
 ```javascript
 // user.js
@@ -150,7 +166,7 @@ user.can('create', 'Post', function (err, can) {
   }
 });
 
-user.canAny([['read', 'Post'], ['create', 'Post']], function (err, canReadOrCreate) {
+user.canAny('read:Post create:Post', function (err, canReadOrCreate) {
   if (canReadOrCreate) {
     // ok
   }
@@ -158,6 +174,7 @@ user.canAny([['read', 'Post'], ['create', 'Post']], function (err, canReadOrCrea
     // insufficient privileges
   }
 });
+
 
 user.removeRole('admin', function (err) {});
 ```
@@ -197,15 +214,21 @@ Check if the model has the given permisison.
 
 Check if the model has _any_ of the given permissions.
 
-* `actionsAndSubjects` Array (of `[String, String]`)
+* `actionsAndSubjects` ✝
 * `callback(err, bool)` Function
 
 ### `canAll(actionsAndSubjects, callback)`
 
 Check if the model has _all_ of the given permissions.
 
-* `actionsAndSubjects` Array (of [String, String])
+* `actionsAndSubjects` ✝
 * `callback(err, bool)` Function
+
+✝ `actionsAndSubjects` may take any of the following forms:
+* `[['read', 'Post'], ['create', 'Post']]`
+* `[{action: 'read', subject: 'Post'}, {action: 'create', subject: 'Post'}]`
+* `{Post: ['read', 'create']}`
+* `'read:Post create:Post'`
 
 ## Running Tests
 
