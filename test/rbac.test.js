@@ -9,17 +9,17 @@ before(function (next) {
   common.setup('mongodb://localhost/rbac_test', next);
 });
 
-describe('roles and permissions', function () {
+describe('roles and permissions:', function () {
   var henry;
 
   beforeEach(function (next) {
     common.loadFixtures(function (err) {
       if (err) return next(err);
-      User.findOne({ username: 'henry' }, function (err, user) {
+      User.findOne({ username: 'henry' }).populate('roles').exec(function (err, user) {
         if (err) return next(err);
         henry = user;
         next();
-      })
+      });
     });
   });
 
@@ -27,27 +27,27 @@ describe('roles and permissions', function () {
     common.reset(next);
   });
 
-  describe('initialization', function () {
+  describe('initialization:', function () {
     it('should batch create roles and permissions', function (next) {
       rbac.init({
-        admin: [
+        role1: [
           ['create', 'Post'],
           ['read', 'Post'],
           ['update', 'Post'],
           ['delete', 'Post']
         ],
-        readonly: [
+        role2: [
           ['read', 'Post']
         ],
-        content: [
+        role3: [
           ['read', 'Post'],
           ['update', 'Post']
         ]
-      }, function (err, admin, readonly, content) {
+      }, function (err, role1, role2, role3) {
         expect(err).to.not.exist;
-        expect(admin.permissions).to.have.length(4);
-        expect(readonly.permissions).to.have.length(1);
-        expect(content.permissions).to.have.length(2);
+        expect(role1.permissions).to.have.length(4);
+        expect(role2.permissions).to.have.length(1);
+        expect(role3.permissions).to.have.length(2);
         next();
       });
     });
@@ -58,7 +58,7 @@ describe('roles and permissions', function () {
       expect(err).not.to.exist;
       expect(henry.roles).to.have.length(1);
       Role.findOne({ name: 'admin' }, function (err, role) {
-        expect(henry.roles[0].toString()).to.equal(role.id);
+        expect(henry.roles[0].id).to.equal(role.id);
         next();
       });
     });
@@ -78,11 +78,12 @@ describe('roles and permissions', function () {
     expect(henry.roles).to.be.empty;
     henry.hasRole('admin', function (err, hasAdminRole) {
       expect(err).to.not.exist;
-      expect(hasAdminRole).to.be(false);
+      expect(hasAdminRole).to.equal(false);
       henry.addRole('admin', function (err) {
+        expect(err).to.not.exist;
         henry.hasRole('admin', function (err, hasAdminRole) {
           expect(err).to.not.exist;
-          expect(hasAdminRole).to.be(true);
+          expect(hasAdminRole).to.equal(true);
           next();
         });
       });
@@ -91,12 +92,13 @@ describe('roles and permissions', function () {
 
   it('should indicate whether a model has a given permission', function (next) {
     henry.addRole('readonly', function (err) {
+      expect(err).to.not.exist;
       henry.can('read', 'Post', function (err, canReadPost) {
         expect(err).to.not.exist;
-        expect(canReadPost).to.be(true);
+        expect(canReadPost).to.equal(true);
         henry.can('create', 'Post', function (err, canCreatePost) {
           expect(err).to.not.exist;
-          expect(canCreatePost).to.be(false);
+          expect(canCreatePost).to.equal(false);
           next();
         });
       });
@@ -107,10 +109,10 @@ describe('roles and permissions', function () {
     henry.addRole('readonly', function (err) {
       henry.canAll([['read', 'Post'], ['read', 'Comment']], function (err, canRead) {
         expect(err).to.not.exist;
-        expect(canRead).to.be(true);
+        expect(canRead).to.equal(true);
         henry.canAll([['read', 'Post'], ['create', 'Post']], function (err, canReadAndCreate) {
           expect(err).to.not.exist;
-          expect(canReadAndCreate).to.be(false);
+          expect(canReadAndCreate).to.equal(false);
           next();
         });
       });
@@ -119,9 +121,10 @@ describe('roles and permissions', function () {
 
   it('should indicate whether a model has any of a given set of permissions', function (next) {
     henry.addRole('readonly', function (err) {
+      expect(err).to.not.exist;
       henry.canAny([['read', 'Post'], ['create', 'Post']], function (err, canReadOrCreate) {
         expect(err).to.not.exist;
-        expect(canReadOrCreate).to.be.true;
+        expect(canReadOrCreate).to.equal(true);
         next();
       });
     });
