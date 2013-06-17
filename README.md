@@ -47,7 +47,7 @@ rbac.init({
 });
 ```
 
-`rbac.init` supports three syntaxes for mapping roles to permissions:
+`rbac.init` supports four syntaxes for mapping roles to permissions:
 
 ```javascript
 // Subject-actions object
@@ -77,6 +77,11 @@ rbac.init({
     {action: 'read', subject: 'Comment'}
   ]
 });
+
+// action/subject string
+rbac.init({
+  admin: 'create:Post read:Post create:Comment read:Comment'
+})
 ```
 
 You may, however, choose to work with permissions and roles at a more granular level:
