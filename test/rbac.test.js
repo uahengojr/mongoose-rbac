@@ -53,6 +53,13 @@ describe('roles and permissions:', function () {
     });
   });
 
+  it('should require a unique role name', function (next) {
+    Role.create({ name: 'admin' }, function (err, role) {
+      expect(err.message).to.equal('Role name must be unique');
+      next();
+    });
+  });
+
   it('should add a role to a model', function (next) {
     henry.addRole('admin', function (err) {
       expect(err).not.to.exist;

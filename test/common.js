@@ -56,16 +56,16 @@ function loadFixtures(callback) {
       var perms, admin, readonly;
 
       perms = Array.prototype.slice.call(arguments, 1);
-
       admin = new Role({ name: 'admin' });
       admin.permissions = perms;
-      admin.save();
-
-      readonly = new Role({ name: 'readonly' });
-      readonly.permissions = [perms[1], perms[5]];
-      readonly.save();
-
-      callback();
+      admin.save(function (err, admin) {
+        if (err) return callback(err);
+        readonly = new Role({ name: 'readonly' });
+        readonly.permissions = [perms[1], perms[5]];
+        readonly.save(function (err, readonly) {
+          callback(err);
+        });
+      });
     });
   });
 }
