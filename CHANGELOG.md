@@ -3,7 +3,7 @@
 ## 0.1.0 (2013-06-17)
 
   * Upgrade to mongoose 3.6.11
-  * Switch from expect.js to mocha for tests
+  * Switch from expect.js to chai for tests
   * Add schema validation to ensure unique role names
 
 ## 0.0.3 (2013-03-09)
