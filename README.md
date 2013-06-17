@@ -53,15 +53,17 @@ Permission.create(permissions, function (err) {
 
   admin = new Role({ name: 'admin' });
   admin.permissions = perms;
-  admin.save();
-
-  developer = new Role({ name: 'developer' });
-  developer.permissions = perms.slice(0, 7);
-  developer.save();
-
-  readonly = new Role({ name: 'readonly' });
-  readonly.permissions = [perms[1], perms[5], perms[9]];
-  readonly.save();
+  admin.save(function (err, admin) {
+    developer = new Role({ name: 'developer' });
+    developer.permissions = perms.slice(0, 7);
+    developer.save(function (err, developer) {
+      readonly = new Role({ name: 'readonly' });
+      readonly.permissions = [perms[1], perms[5], perms[9]];
+      readonly.save(function (err, readonly) {
+        // ...
+      });
+    });
+  });
 });
 ```
 
