@@ -1,6 +1,6 @@
 {
   "name": "mongoose-rbac",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Role-based access control for mongoose apps.",
   "main": "lib/index.js",
   "scripts": {
@@ -27,10 +27,10 @@
   "readmeFilename": "README.md",
   "devDependencies": {
     "mocha": "~1.8.1",
-    "expect.js": "~0.2.0"
+    "chai": "~1.6.1"
   },
   "dependencies": {
-    "mongoose": "~3.6.0rc0",
+    "mongoose": "~3.6.11",
     "async": "~0.2.6"
   }
 }

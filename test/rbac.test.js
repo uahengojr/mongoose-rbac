@@ -1,4 +1,4 @@
-var expect = require('expect.js')
+var expect = require('chai').expect
   , rbac = require('../')
   , common = require('./common')
   , Permission = rbac.Permission
@@ -73,6 +73,7 @@ describe('roles and permissions:', function () {
 
   it('should remove a role from a model', function (next) {
     henry.addRole('admin', function (err) {
+      expect(err).to.not.exist;
       henry.removeRole('admin', function (err) {
         expect(err).to.not.exist;
         expect(henry.roles).to.be.empty;
