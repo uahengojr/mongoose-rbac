@@ -2,6 +2,10 @@
 
 Role-based access control for mongoose apps.
 
+## Requirements
+
+* [mongoose](https://github.com/learnboost/mongoose/) ~3.6.11
+
 ## Installation
 
 ```
