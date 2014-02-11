@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.1 (2014-02-10)
+
+  * Upgrade to mongoose 3.8.x
+
 ## 0.1.0 (2013-06-17)
 
   * Upgrade to mongoose 3.6.11
