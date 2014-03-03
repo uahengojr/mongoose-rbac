@@ -139,4 +139,16 @@ describe('roles and permissions:', function () {
     });
   });
 
+  it('should be able to add multiple roles', function (next) {
+    henry.addRole('admin', function (err) {
+      expect(err).to.not.exist;
+      expect(henry.roles).to.have.length(1);     
+      henry.addRole('readonly', function (err) {
+        expect(err).to.not.exist;
+        expect(henry.roles).to.have.length(2);
+        next();
+       });
+    });
+  });
+
 });
