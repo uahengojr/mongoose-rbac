@@ -1,5 +1,4 @@
 var expect = require('chai').expect
-  , assert = require('chai').assert
   , rbac = require('../')
   , common = require('./common')
   , Permission = rbac.Permission
@@ -66,7 +65,7 @@ describe('roles and permissions:', function () {
       expect(err).not.to.exist;
       expect(henry.roles).to.have.length(1);
       Role.findOne({ name: 'admin' }, function (err, role) {
-        assert.ok(henry.roles[0].equals(role._id))
+        expect(henry.roles[0].equals(role._id)).to.be.ok;
         next();
       });
     });
@@ -142,7 +141,7 @@ describe('roles and permissions:', function () {
   it('should be able to add multiple roles', function (next) {
     henry.addRole('admin', function (err) {
       expect(err).to.not.exist;
-      expect(henry.roles).to.have.length(1);     
+      expect(henry.roles).to.have.length(1);
       henry.addRole('readonly', function (err) {
         expect(err).to.not.exist;
         expect(henry.roles).to.have.length(2);
