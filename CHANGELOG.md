@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.2 (2014-03-05)
+
+  * Fix issue #7 (assigning more than one role not possible)
+
 ## 0.1.1 (2014-02-10)
 
   * Upgrade to mongoose 3.8.x
