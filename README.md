@@ -1,6 +1,8 @@
 # mongoose-rbac
 
-Role-based access control for mongoose apps.
+Role-based access control for [mongoose](http://mongoosejs.com) apps.
+
+[![Build Status](https://secure.travis-ci.org/bryandragon/mongoose-rbac.png)](http://travis-ci.org/bryandragon/mongoose-rbac)
 
 ## Requirements
 
