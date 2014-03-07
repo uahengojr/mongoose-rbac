@@ -1,7 +1,8 @@
+/* global describe,it,before,beforeEach,afterEach */
+
 var expect = require('chai').expect
   , rbac = require('../')
   , common = require('./common')
-  , Permission = rbac.Permission
   , Role = rbac.Role
   , User = common.User;
 
@@ -54,7 +55,7 @@ describe('roles and permissions:', function () {
   });
 
   it('should require a unique role name', function (next) {
-    Role.create({ name: 'admin' }, function (err, role) {
+    Role.create({ name: 'admin' }, function (err) {
       expect(err.message).to.equal('Role name must be unique');
       next();
     });
@@ -62,7 +63,7 @@ describe('roles and permissions:', function () {
 
   it('should add a role to a model', function (next) {
     henry.addRole('admin', function (err) {
-      expect(err).not.to.exist;
+      expect(err).to.not.exist;
       expect(henry.roles).to.have.length(1);
       Role.findOne({ name: 'admin' }, function (err, role) {
         expect(henry.roles[0].equals(role._id)).to.be.ok;
@@ -78,7 +79,7 @@ describe('roles and permissions:', function () {
         expect(err).to.not.exist;
         expect(henry.roles).to.be.empty;
         next();
-      })
+      });
     });
   });
 
@@ -115,6 +116,7 @@ describe('roles and permissions:', function () {
 
   it('should indicate whether a model has all of a given set of permissions', function (next) {
     henry.addRole('readonly', function (err) {
+      expect(err).to.not.exist;
       henry.canAll([['read', 'Post'], ['read', 'Comment']], function (err, canRead) {
         expect(err).to.not.exist;
         expect(canRead).to.equal(true);
@@ -146,8 +148,7 @@ describe('roles and permissions:', function () {
         expect(err).to.not.exist;
         expect(henry.roles).to.have.length(2);
         next();
-       });
+      });
     });
   });
-
 });

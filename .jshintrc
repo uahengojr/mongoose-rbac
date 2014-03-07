@@ -1,0 +1,11 @@
+{
+  "camelcase": true,
+  "expr": true,
+  "indent": 2,
+  "laxcomma": true,
+  "loopfunc": true,
+  "node": true,
+  "noempty": true,
+  "undef": true,
+  "unused": true
+}

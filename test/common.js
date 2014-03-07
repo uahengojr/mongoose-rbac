@@ -1,5 +1,4 @@
 var mongoose = require('mongoose')
-  , async = require('async')
   , rbac = require('../')
   , Permission = rbac.Permission
   , Role = rbac.Role
@@ -37,15 +36,15 @@ function loadFixtures(callback) {
     if (err) return callback(err);
 
     var permissions = [
-        { subject: 'Post', action: 'create' }
-      , { subject: 'Post', action: 'read' }
-      , { subject: 'Post', action: 'update' }
-      , { subject: 'Post', action: 'delete' }
-      , { subject: 'Comment', action: 'create' }
-      , { subject: 'Comment', action: 'read' }
-      , { subject: 'Comment', action: 'update' }
-      , { subject: 'Comment', action: 'delete' }
-    ];
+        { subject: 'Post', action: 'create' },
+        { subject: 'Post', action: 'read' },
+        { subject: 'Post', action: 'update' },
+        { subject: 'Post', action: 'delete' },
+        { subject: 'Comment', action: 'create' },
+        { subject: 'Comment', action: 'read' },
+        { subject: 'Comment', action: 'update' },
+        { subject: 'Comment', action: 'delete' }
+      ];
 
     var user = new User({ username: 'henry' });
     user.save();
@@ -58,11 +57,11 @@ function loadFixtures(callback) {
       perms = Array.prototype.slice.call(arguments, 1);
       admin = new Role({ name: 'admin' });
       admin.permissions = perms;
-      admin.save(function (err, admin) {
+      admin.save(function (err) {
         if (err) return callback(err);
         readonly = new Role({ name: 'readonly' });
         readonly.permissions = [perms[1], perms[5]];
-        readonly.save(function (err, readonly) {
+        readonly.save(function (err) {
           callback(err);
         });
       });
