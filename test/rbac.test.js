@@ -99,6 +99,21 @@ describe('roles and permissions:', function () {
     });
   });
 
+  it('should indicate whether a model has a given role when roles are populated', function (next) {
+    henry.addRole('admin', function (err) {
+      expect(err).to.not.exist;
+      henry.can('create', 'Post', function (err, can) {
+        expect(err).to.not.exist;
+        expect(can).to.equal(true);
+        henry.hasRole('admin', function (err, isAdmin) {
+          expect(err).to.not.exist;
+          expect(isAdmin).to.equal(true);
+          next();
+        });
+      });
+    });
+  });
+
   it('should indicate whether a model has a given permission', function (next) {
     henry.addRole('readonly', function (err) {
       expect(err).to.not.exist;
