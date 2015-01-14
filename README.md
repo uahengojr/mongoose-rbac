@@ -1,3 +1,5 @@
+Attention: This project is in need of a new maintainer. Please contact me @bryandragon if you are interested in adopting it.
+
 # mongoose-rbac
 
 Role-based access control for [mongoose](http://mongoosejs.com) apps.
