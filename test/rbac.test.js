@@ -82,7 +82,7 @@ describe('roles and permissions:', function () {
       });
     });
   });
-
+  
   it('should indicate whether a model has a given role', function (next) {
     expect(henry.roles).to.be.empty;
     henry.hasRole('admin', function (err, hasAdminRole) {
@@ -166,4 +166,18 @@ describe('roles and permissions:', function () {
       });
     });
   });
+  
+  
+  it('should remove all roles from a model', function (next) {
+    henry.addRole('admin', function (err) {
+      expect(err).to.not.exist;
+      henry.removeAllRoles(function (err) {
+        expect(err).to.not.exist;
+        expect(henry.roles).to.be.empty;
+        next();
+      });
+    });
+  });
+
+
 });

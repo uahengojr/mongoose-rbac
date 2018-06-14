@@ -191,6 +191,14 @@ Remove the given role from the model.
 * `role` String or Role
 * `callback(err)` Function
 
+
+### `removeAllRoles(callback)`
+
+Remove all the given role from the model.
+
+* `callback(err)` Function 
+
+
 ### `can(action, subject, callback)`
 
 Check if the model has the given permisison.
