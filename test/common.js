@@ -18,6 +18,7 @@ function setup(uri, callback) {
 }
 
 function empty(callback) {
+
   User.remove({});
   Role.remove({});
   Permission.remove({});
@@ -56,11 +57,11 @@ function loadFixtures(callback) {
 
       perms = Array.prototype.slice.call(arguments, 1);
       admin = new Role({ name: 'admin' });
-      admin.permissions = perms;
+      admin.permissions = perms[0];
       admin.save(function (err) {
         if (err) return callback(err);
         readonly = new Role({ name: 'readonly' });
-        readonly.permissions = [perms[1], perms[5]];
+        readonly.permissions = [perms[0][1], perms[0][5]];
         readonly.save(function (err) {
           callback(err);
         });

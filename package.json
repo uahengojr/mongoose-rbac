@@ -8,7 +8,7 @@
   ],
   "main": "lib/index.js",
   "scripts": {
-    "test": "make test"
+    "test": "mocha test/**/*.test.js --timeout 10000"
   },
   "repository": {
     "type": "git",
@@ -23,13 +23,13 @@
     "permission"
   ],
   "dependencies": {
-    "mongoose": "~3.8.x",
-    "async": "~0.2.6"
+    "mongoose": "~6.2.x",
+    "async": "~3.2.3"
   },
   "devDependencies": {
-    "mocha": "~1.8.1",
-    "chai": "~1.6.1",
-    "jshint": "~2.4.4"
+    "mocha": "~9.2.2",
+    "chai": "~4.3.6",
+    "jshint": "~2.13.4"
   },
   "license": "MIT"
 }

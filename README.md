@@ -6,7 +6,7 @@ Role-based access control for [mongoose](http://mongoosejs.com) apps.
 
 ## Requirements
 
-* [mongoose](https://github.com/learnboost/mongoose/) 3.8.x
+* [mongoose](https://github.com/learnboost/mongoose/) 6.2.x
 
 ## Installation
 
